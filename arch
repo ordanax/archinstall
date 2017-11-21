@@ -1,8 +1,6 @@
 #!/bin/sh
-#Author Mikhail Sarvilin
+#Author Mikhail Sarvilin + Alex Boyko
 #script for install Arch Linux 
-#
-#
 mkfs.ext2 /dev/sda1 -L boot
 mkswap /dev/sda2 -L swap
 mkfs.btrfs /dev/sda3 -L root
@@ -63,7 +61,7 @@ makepkg
 pacman -U yaourt-1.2.2-1-any.pkg.tar.xz --noconfirm --noprogressbar --quiet
 cd
 rm -rf ~/Downloads/*
-pacman -S firefox filezilla cherrytree gimp libreoffice libreoffice-fresh-ru kdenlive audacity pidgin screenfetch mplayer smplayer smplayer-themes qt4 ufw guvcview transmission-qt simplescreenrecorder gparted f2fs-tools dosfstools ntfs-3g alsa-lib gnome-calculator file-roller p7zip unrar gvfs aspell-ru klavaro gedit --noconfirm --noprogressbar --quiet
+pacman -S firefox cherrytree libreoffice libreoffice-fresh-ru ufw gparted qbittorrent f2fs-tools dosfstools ntfs-3g alsa-lib gnome-calculator file-roller p7zip unrar gvfs aspell-ru gedit --noconfirm --noprogressbar --quiet
 exit
 umount -R /mnt
 reboot
