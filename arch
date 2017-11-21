@@ -25,7 +25,7 @@ nano /etc/mkinitcpio.conf
 mkinitcpio -p linux
 nano /etc/hostname
 nano /etc/hosts
-ln -sf /usr/share/zoneinfo/Europe/Moscow /etc/localtime
+ln -sf /usr/share/zoneinfo/Asia/Yekaterinburg /etc/localtime
 hwclock --systohc
 grub-install /dev/sda
 grub-mkconfig -o /boot/grub/grub.cfg
