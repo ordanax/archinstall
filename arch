@@ -31,8 +31,8 @@ grub-install /dev/sda
 grub-mkconfig -o /boot/grub/grub.cfg
 passwd
 echo -e "[multilib]i\nInclude = /etc/pacman.d/mirrorlist" >> /etc/pacman.conf
-useeradd -m -g users -G audio,games,lp,optical,power,scanner,storage,video,wheel -s /bin/bash tux
-passwd tux
+useeradd -m -g users -G audio,games,lp,optical,power,scanner,storage,video,wheel -s /bin/bash ordanax
+passwd ordanax
 systemctl enable dhcpcd
 systemctl start dhcpcd
 wifi-menu
