@@ -61,7 +61,7 @@ makepkg
 pacman -U yaourt-1.2.2-1-any.pkg.tar.xz --noconfirm --noprogressbar --quiet
 cd
 rm -rf ~/Downloads/*
-pacman -S firefox cherrytree libreoffice libreoffice-fresh-ru ufw gparted qbittorrent f2fs-tools dosfstools ntfs-3g alsa-lib gnome-calculator file-roller p7zip unrar gvfs aspell-ru gedit --noconfirm --noprogressbar --quiet
+pacman -S firefox cherrytree libreoffice libreoffice-fresh-ru ufw gparted timeshift qbittorrent f2fs-tools dosfstools ntfs-3g alsa-lib gnome-calculator file-roller p7zip unrar gvfs aspell-ru gedit --noconfirm --noprogressbar --quiet
 exit
 umount -R /mnt
 reboot
