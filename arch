@@ -1,6 +1,8 @@
 #!/bin/sh
 #Author Mikhail Sarvilin & Alex Boyko
-#Script for install Arch Linux 
+#Script for install Arch Linux
+# Ссылка на чек лист https://vk.cc/8a1asw
+# echo нужно для отслеживание ошибок при установке, чобы знать на каком моменте произошла ошибка. После отладки все echo может быть убранно из скрипта.
 
 # Разбивку дисков делаем о запуска скрипта, по схеме:
 # ext2  /dev/sda1 -L boot
@@ -8,13 +10,27 @@
 # /dev/sda3 -L swap
 # ext4  /dev/sda4 -L home
 
+echo 'Скрипт сделан на основе чеклиста Бойко Алексея по Установке ArchLinux'
+read -p "Пауза 3 ceк." -t 3
+echo '2.4 Создание разделов и монтирование дисков'
+read -p "Пауза 3 ceк." -t 3
 
+echo 'Подключаем килиллицу для терминала'
+read -p "Пауза 3 ceк." -t 3
+# Подключаем килиллицу для терминала
+loadkeys ru
+setfont cyr-sun16
+
+echo 'Форматируем диски'
+read -p "Пауза 3 ceк." -t 3
 # Форматируем диски
 mkfs.ext2 /dev/sda1 -L boot
 mkswap /dev/sda2 -L swap
 mkfs.btrfs /dev/sda3 -L root
 mkfs.btrfs /dev/sda4 -L home
 
+echo 'Монтируем'
+read -p "Пауза 3 ceк." -t 3
 # Монтируем
 mount /dev/sda3 /mnt
 mkdir /mnt/{boot,home}
@@ -24,46 +40,74 @@ mount -t proc /proc /mnt/proc
 mount --rbind /sys /mnt/sys
 mount --rbind /dev /mnt/dev
 
-# Ставим зеркало от yandex
-echo "Server = http://mirror.yandex.ru/archlinux/$repo/os/$arch" > /etc/pacman.d/mirrorlist
-
-# Ставим ядро и некоторые программы
-pacstrap /mnt base base-devel grub net-tools links wget reflector
-arch-chroot /mnt pacman -S netctl dialog wpa_supplicant --noconfirm --noprogressbar --quiet
-genfstab -pU /mnt >> /mnt/etc/fstab
-arch-chroot /mnt
-echo -e "en_US.UTF-8 UTF-8\nru_RU.UTF-8 UTF-8" >> /etc/locale.gen
-locale-gen
-echo "en_US.UTF-8" > /etc/locale.conf
-mkinitcpio -p linux
-
-# Прописываем имя вашего компьютера. Вместо ArchLinux вписываем свое название
-echo "ArchLinux" > /etc/hostname
-ln -sf /usr/share/zoneinfo/Asia/Yekaterinburg /etc/localtime
-hwclock --systohc
-grub-install /dev/sda
-grub-mkconfig -o /boot/grub/grub.cfg
-passwd
-echo -e "[multilib]i\nInclude = /etc/pacman.d/mirrorlist" >> /etc/pacman.conf
-useeradd -m -g users -G audio,games,lp,optical,power,scanner,storage,video,wheel -s /bin/bash ordanax
-passwd ordanax
-systemctl enable dhcpcd
-systemctl start dhcpcd
-wifi-menu
+echo '3.1 Выбор зеркал для загрузки. Используем программу Reflector'
+read -p "Пауза 3 ceк." -t 3
+pacman -Sy --noconfirm --noprogressbar --quiet reflector
+pacman -S --noconfirm --needed --noprogressbar --quiet reflector
 reflector -l 3 --sort rate --save /etc/pacman.d/mirrorlist
-pacman -Syu
-echo "%wheel ALL=(ALL) ALL" >> /etc/sudoers
-
-# Стаивм иксы
-pacman -S xorg-server xorg-drivers --noconfirm --noprogressbar --quiet
-pacman -S xfce4 xfce4-goodies sddm alsa-utils --noconfirm --noprogressbar --quiet
-pacman -S networkmanager network-manager-applet ppp
-systemctl enable sddm.service NetworkManager
-
-# Ставим шрифты, чтобы не было квадратиков вместо кириллицы
-pacman -S pacman -S ttf-liberation ttf-dejavu --noconfirm --noprogressbar --quiet
-pacman -S yajl --noconfirm --noprogressbar --quiet
-cd ~/Downloads/
+echo '3.2 Установка основных пакетов'
+read -p "Пауза 3 ceк." -t 3
+pacstrap /mnt base base-devel
+echo '3.3 Настройка системы'
+read -p "Пауза 3 ceк." -t 3
+genfstab -pU /mnt >> /mnt/etc/fstab
+echo 'Переходим в установлнную систему'
+read -p "Пауза 3 ceк." -t 3
+arch-chroot /mnt
+echo "ArchLinux" > /etc/hostname
+ln -svf /usr/share/zoneinfo/Asia/Yekaterinburg /etc/localtime
+echo '3.4 Добавляем русскую локаль системы'
+read -p "Пауза 3 ceк." -t 3
+echo -e "en_US.UTF-8 UTF-8\nru_RU.UTF-8 UTF-8" >> /etc/locale.gen
+echo 'Обновим текущую локаль системы'
+read -p "Пауза 3 ceк." -t 3
+locale-gen
+echo 'Указываем язык системы'
+read -p "Пауза 3 ceк." -t 3
+echo 'LANG="ru_RU.UTF-8"' > /etc/locale.conf
+echo 'Вписываем KEYMAP=ru FONT=cyr-sun16'
+read -p "Пауза 3 ceк." -t 3
+echo 'KEYMAP=ru' >> /etc/vconsole.conf
+echo 'FONT=cyr-sun16' >> /etc/vconsole.conf
+echo 'Создадим загрузочный RAM диск'
+read -p "Пауза 3 ceк." -t 3
+mkinitcpio -p linux
+echo 'Создаем root пароль'
+read -p "Пауза 15 ceк." -t 15
+passwd
+echo '3.5 Устанавливаем загрузчик'
+read -p "Пауза 3 ceк." -t 3
+pacman -Syy
+pacman -S grub --noconfirm --noprogressbar --quiet
+grub-install /dev/sda
+echo 'Обновляем grub.cfg'
+read -p "Пауза 3 ceк." -t 3
+grub-mkconfig -o /boot/grub/grub.cfg
+read -p "Пауза 3 ceк." -t 3
+echo 'Ставим программу для Wi-fi'
+pacman -S dialog wpa_supplicant --noconfirm --noprogressbar --quiet
+echo 'Добавляем пользователя'
+useradd -m -g users -G wheel -s /bin/bash ordanax
+echo 'Устанавливаем пароль пользователя'
+read -p "Пауза 15 ceк." -t 15
+passwd ordanax
+echo 'Устанавливаем SUDO'
+read -p "Пауза 3 ceк." -t 3
+echo '%wheel ALL=(ALL) ALL' >> /etc/sudoers
+echo 'Раскомментируем репозиторий multilib Для работы 32-битных приложений в 64-битной системе.'
+read -p "Пауза 3 ceк." -t 3
+echo '[multilib]' >> /etc/pacman.d/mirrorlist
+echo 'Include = /etc/pacman.d/mirrorlist' >> /etc/pacman.d/mirrorlist
+pacman -Syy
+echo 'Ставим иксы и драйвера'
+read -p "Пауза 3 ceк." -t 3
+pacman -S xorg-server xorg-drivers
+echo 'Ставим Xfce, LXDM и сеть'
+read -p "Пауза 3 ceк." -t 3
+pacman -S --noconfirm xfce4 xfce4-goodies lxdm networkmanager network-manager-applet ppp ttf-liberation ttf-dejavu
+echo 'Подключаем автозагрузку менеджера входа и интернет'
+read -p "Пауза 3 ceк." -t 3
+systemctl enable lxdm NetworkManager
 
 #yaourt закоментирован. В место него ставим aurman. Если нужен yaourt раскомментируйте стьки ниже.
 #wget https://aur.archlinux.org/cgit/aur.git/snapshot/package-query.tar.gz
@@ -78,26 +122,30 @@ cd ~/Downloads/
 #makepkg
 #pacman -U yaourt-1.2.2-1-any.pkg.tar.xz --noconfirm --noprogressbar --quiet
 
-#Ставм aurman
+echo 'Установка AUR (aurman)'
+read -p "Пауза 3 ceк." -t 3
 sudo pacman -Syy
-pacman -S git
 git clone https://aur.archlinux.org/aurman.git
 cd aurman
 makepkg -si
 cd ..
 rm -rf aurman
-
-#Ставм программы
-pacman -S firefox filezilla cherrytree gimp libreoffice libreoffice-fresh-ru kdenlive audacity pidgin screenfetch vlc qt4 ufw guvcview transmission-qt gparted f2fs-tools dosfstools ntfs-3g alsa-lib alsa-utils gnome-calculator file-roller p7zip unrar gvfs aspell-ru pulseaudio --noconfirm --noprogressbar --quiet
-
-#Ставим настройки XFCE
+echo 'Установка программ'
+read -p "Пауза 3 ceк." -t 3
+pacman -S firefox obs-studio veracrypt freemind filezilla cherrytree gimp libreoffice libreoffice-fresh-ru kdenlive audacity pidgin screenfetch vlc qt4 ufw qbittorrent f2fs-tools dosfstools ntfs-3g alsa-lib alsa-utils gnome-calculator file-roller p7zip unrar gvfs aspell-ru pulseaudio --noconfirm --noprogressbar --quiet
+aurman -S dropbox joxi obs-linuxbrowser xflux xflux-gui-git purple-vk-plugin purple-facebook pidgin-encryption sublime-text2 hunspell-ru pamac-aur osx-arc-shadow breeze-obsidian-cursor-theme papirus-maia-icon-theme-git --noconfirm --noprogressbar --quiet
+echo 'Включаем сетевой экран'
+read -p "Пауза 3 ceк." -t 3
+ufw enable
+echo 'Качаем и устанавливаем настройки Xfce'
+read -p "Пауза 15 ceк." -t 15
 cd ~/Downloads
 wget http://ordanax.ru/arch_linux/xfce4.tar.gz
 tar -xzf xfce4.tar.gz -C /home/ordanax/.config/xfce4/
 rm -rf ~/Downloads/*
 echo "xcompmgr -c -C -t-5 -l-5 -r4.2 -o.55 &" > /home/ordanax/.Xprofile
-
-#Выходим, отмонтируемся, перегружаемся
+echo 'Установка завершена! Перезагружаемся. И настраиваем с пункта 5.6 Настройки Xfce'
+read -p "Пауза 15 ceк." -t 15
 exit
 umount -R /mnt
 reboot
