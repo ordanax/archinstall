@@ -25,6 +25,12 @@ mkfs.ext4  /dev/sda2 -L root
 mkswap /dev/sda3 -L swap
 mkfs.ext4  /dev/sda4 -L home
 
+echo 'Чтобы продолжилась установка без прерывания'
+read -p "Пауза 3 ceк." -t 3
+mount -t proc /proc /mnt/proc
+mount --rbind /sys /mnt/sys
+mount --rbind /dev /mnt/dev
+
 echo 'Монтируем'
 read -p "Пауза 3 ceк." -t 3
 mount /dev/sda2 /mnt
