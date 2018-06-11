@@ -50,6 +50,7 @@ genfstab -pU /mnt >> /mnt/etc/fstab
 echo 'Переходим в установлнную систему'
 read -p "Пауза 3 ceк." -t 3
 arch-chroot /mnt
+#Тут работа скрипта прерывается
 echo "ArchLinux" > /etc/hostname
 ln -svf /usr/share/zoneinfo/Asia/Yekaterinburg /etc/localtime
 
