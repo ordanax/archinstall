@@ -21,10 +21,10 @@ setfont cyr-sun16
 
 echo 'Форматируем диски'
 read -p "Пауза 3 ceк." -t 3
-mkfs.ext2 /dev/sda1 -L boot
-mkswap /dev/sda2 -L swap
-mkfs.btrfs /dev/sda3 -L root
-mkfs.btrfs /dev/sda4 -L home
+mkfs.ext2  /dev/sda5 -L boot
+mkfs.ext4  /dev/sda6 -L root
+mkswap /dev/sda7 -L swap
+mkfs.ext4 /dev/sda8 -L home
 
 echo 'Монтируем'
 read -p "Пауза 3 ceк." -t 3
