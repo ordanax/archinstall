@@ -47,23 +47,40 @@ amixer sset 'Master' 50%
 pacman -S ttf-liberation ttf-dejavu opendesktop-fonts ttf-bitstream-vera ttf-arphic-ukai ttf-arphic-uming ttf-hanazono --noconfirm --noprogressbar --quiet
 pacman -S yajl --noconfirm --noprogressbar --quiet
 cd ~/Downloads/
-wget https://aur.archlinux.org/cgit/aur.git/snapshot/package-query.tar.gz
-tar -xzf package-query.tar.gz
-cd package-query/
-makepkg
-pacman -U package-query-1.1-2-x86_64.pkg.tar.xz --noconfirm --noprogressbar --quiet
-cd ~/Downloads/
-wget https://aur.archlinux.org/cgit/aur.git/snapshot/yaourt.tar.gz
-tar -xzf yaourt.tar.gz
-cd yaourt/
-makepkg
-pacman -U yaourt-1.2.2-1-any.pkg.tar.xz --noconfirm --noprogressbar --quiet
+
+#yaourt закоментирован. В место него ставим aurman. Если нужен yaourt раскомментируйте стьки ниже.
+#wget https://aur.archlinux.org/cgit/aur.git/snapshot/package-query.tar.gz
+#tar -xzf package-query.tar.gz
+#cd package-query/
+#makepkg
+#pacman -U package-query-1.1-2-x86_64.pkg.tar.xz --noconfirm --noprogressbar --quiet
+#cd ~/Downloads/
+#wget https://aur.archlinux.org/cgit/aur.git/snapshot/yaourt.tar.gz
+#tar -xzf yaourt.tar.gz
+#cd yaourt/
+#makepkg
+#pacman -U yaourt-1.2.2-1-any.pkg.tar.xz --noconfirm --noprogressbar --quiet
+
+#Ставм aurman
+sudo pacman -Syy
+pacman -S git
+git clone https://aur.archlinux.org/aurman.git
+cd aurman
+makepkg -si
+cd ..
+rm -rf aurman
+
+#Ставм программы
 pacman -S firefox filezilla cherrytree gimp libreoffice libreoffice-fresh-ru kdenlive audacity pidgin screenfetch vlc qt4 ufw guvcview transmission-qt gparted f2fs-tools dosfstools ntfs-3g alsa-lib alsa-utils gnome-calculator file-roller p7zip unrar gvfs aspell-ru pulseaudio --noconfirm --noprogressbar --quiet
+
+#Ставим настройки XFCE
 cd ~/Downloads
 wget http://ordanax.ru/arch_linux/xfce4.tar.gz
 tar -xzf xfce4.tar.gz -C /home/ordanax/.config/xfce4/
 rm -rf ~/Downloads/*
 echo "xcompmgr -c -C -t-5 -l-5 -r4.2 -o.55 &" > /home/ordanax/.Xprofile
+
+#Выходим, отмонтируемся, перегружаемся
 exit
 umount -R /mnt
 reboot
