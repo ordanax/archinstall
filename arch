@@ -1,8 +1,15 @@
 #!/bin/sh
 #Author Mikhail Sarvilin & Alex Boyko
 #Script for install Arch Linux 
-#
-# Размечаем диски
+
+# Разбивку дисков делаем о запуска скрипта, по схеме:
+# ext2  /dev/sda1 -L boot
+# ext4  /dev/sda2 -L root
+# /dev/sda3 -L swap
+# ext4  /dev/sda4 -L home
+
+
+# Форматируем диски
 mkfs.ext2 /dev/sda1 -L boot
 mkswap /dev/sda2 -L swap
 mkfs.btrfs /dev/sda3 -L root
