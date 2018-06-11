@@ -2,11 +2,13 @@
 #Author Mikhail Sarvilin & Alex Boyko
 #Script for install Arch Linux 
 #
-#
+# Размечаем диски
 mkfs.ext2 /dev/sda1 -L boot
 mkswap /dev/sda2 -L swap
 mkfs.btrfs /dev/sda3 -L root
 mkfs.btrfs /dev/sda4 -L home
+
+# Монтируем
 mount /dev/sda3 /mnt
 mkdir /mnt/{boot,home}
 mount /dev/sda1 /mnt/boot
@@ -14,7 +16,11 @@ swapon /dev/sda2
 mount -t proc /proc /mnt/proc
 mount --rbind /sys /mnt/sys
 mount --rbind /dev /mnt/dev
+
+# Ставим зеркало от yandex
 echo "Server = http://mirror.yandex.ru/archlinux/$repo/os/$arch" > /etc/pacman.d/mirrorlist
+
+# Ставим ядро и некоторые программы
 pacstrap /mnt base base-devel grub net-tools links wget reflector
 arch-chroot /mnt pacman -S netctl dialog wpa_supplicant --noconfirm --noprogressbar --quiet
 genfstab -pU /mnt >> /mnt/etc/fstab
@@ -23,7 +29,9 @@ echo -e "en_US.UTF-8 UTF-8\nru_RU.UTF-8 UTF-8" >> /etc/locale.gen
 locale-gen
 echo "en_US.UTF-8" > /etc/locale.conf
 mkinitcpio -p linux
-echo "Acer-PC" > /etc/hostname
+
+# Прописываем имя вашего компьютера. Вместо ArchLinux вписываем свое название
+echo "ArchLinux" > /etc/hostname
 ln -sf /usr/share/zoneinfo/Asia/Yekaterinburg /etc/localtime
 hwclock --systohc
 grub-install /dev/sda
@@ -38,13 +46,15 @@ wifi-menu
 reflector -l 3 --sort rate --save /etc/pacman.d/mirrorlist
 pacman -Syu
 echo "%wheel ALL=(ALL) ALL" >> /etc/sudoers
+
+# Стаивм иксы
 pacman -S xorg-server xorg-drivers --noconfirm --noprogressbar --quiet
 pacman -S xfce4 xfce4-goodies sddm alsa-utils --noconfirm --noprogressbar --quiet
 pacman -S networkmanager network-manager-applet ppp
 systemctl enable sddm.service NetworkManager
-amixer sset Master unmut
-amixer sset 'Master' 50%
-pacman -S ttf-liberation ttf-dejavu opendesktop-fonts ttf-bitstream-vera ttf-arphic-ukai ttf-arphic-uming ttf-hanazono --noconfirm --noprogressbar --quiet
+
+# Ставим шрифты, чтобы не было квадратиков вместо кириллицы
+pacman -S pacman -S ttf-liberation ttf-dejavu --noconfirm --noprogressbar --quiet
 pacman -S yajl --noconfirm --noprogressbar --quiet
 cd ~/Downloads/
 
