@@ -3,16 +3,17 @@
 #Script for install Arch Linux 
 #
 #
-mkfs.btrfs /dev/sda1
-mount /dev/sda1 /mnt
-btrfs subvolume create /mnt/sv_root
-btrfs subvolume create /mnt/sv_home
-btrfs subvolume create /mnt/sv_snapshots
-umount /mnt
-mount -o subvol=sv_root,compress=lzo,autodefrag /dev/sda1 /mnt
-mkdir /mnt/home
-mkdir /mnt/snapshots
-mount -o subvol=sv_snapshots,compress=lzo,autodefrag /dev/sda1 /mnt/snapshots
+mkfs.ext2 /dev/sda1 -L boot
+mkswap /dev/sda2 -L swap
+mkfs.btrfs /dev/sda3 -L root
+mkfs.btrfs /dev/sda4 -L home
+mount /dev/sda3 /mnt
+mkdir /mnt/{boot,home}
+mount /dev/sda1 /mnt/boot
+swapon /dev/sda2
+mount -t proc /proc /mnt/proc
+mount --rbind /sys /mnt/sys
+mount --rbind /dev /mnt/dev
 echo "Server = http://mirror.yandex.ru/archlinux/$repo/os/$arch" > /etc/pacman.d/mirrorlist
 pacstrap /mnt base base-devel grub net-tools links wget reflector
 arch-chroot /mnt pacman -S netctl dialog wpa_supplicant --noconfirm --noprogressbar --quiet
